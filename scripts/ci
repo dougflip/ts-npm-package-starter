@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+
+CMD="$*"
+
+if [ -z "$CMD" ]; then
+ echo "You must provide a command, for example: ./scripts/ci npm run test:ci"
+fi
+
+echo "Building a development Docker image"
+docker build -t ts-npm-package-starter .
+
+echo "Running ${CMD} in ts-npm-package-starter container"
+docker run --rm \
+    -v /app/node_modules \
+    -v "$(pwd)":/app \
+    --env VERSION \
+    --env APPLY_GIT_TAG \
+    --env NPM_TOKEN \
+    ts-npm-package-starter \
+    $CMD

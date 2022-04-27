@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+: "${NPM_TOKEN:?Required NPM_TOKEN env var is not set - exiting.}"
+: "${VERSION:?Required VERSION env var is not set - exiting.}"
+: "${APPLY_GIT_TAG:?Required APPLY_GIT_TAG env var is not set - exiting.}"
+
+echo "Verifying and building code"
+NODE_ENV=production ./scripts/build-and-verify-code
+
+echo "Updating package to version $VERSION"
+npm --no-git-tag-version version "$VERSION"
+
+echo "Publishing to npm registry as a public package"
+npm publish --access public
+
+if [ "$APPLY_GIT_TAG" -eq 0 ]; then
+   echo "APPLY_GIT_TAG set to 0 - skipping tagging this version in git";
+   exit 0
+fi
+
+echo "Applying a Git tag for version ${VERSION}"
+git tag -am "Tagging as version ${VERSION}" "${VERSION}"
+
+echo "Pushing the tag to GitHub"
+git push origin "${VERSION}"
+
+echo "Success: Published and tagged version ${VERSION} of @epistemix/spa-core"

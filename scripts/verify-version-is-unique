@@ -1,0 +1,25 @@
+#!/bin/bash
+
+###
+# Verify that the version listed in package.json has never been released.
+# We do this by checking the tags in git (as oppossed to querying the registry).
+###
+
+: "${VERSION:?Required VERSION env var is not set - exiting.}"
+
+echo "Setting up local git client for CI"
+./scripts/configure-git-for-ci
+
+echo "Fetching tags"
+git fetch --unshallow --tags
+
+if git tag | grep -qi ${VERSION}; then
+    echo "The version, ${VERSION}, is already in use."
+    echo "Here is the list of existing versions:"
+    git tag
+    echo ""
+    echo "Please apply a new and unique version in package.json"
+    exit 1
+fi
+
+echo "Success: Version $VERSION is available."

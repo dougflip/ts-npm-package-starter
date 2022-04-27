@@ -1,0 +1,30 @@
+name: "Actions to run when code is pushed to main"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build_and_publish_a_release:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
+
+      - name: "Verify the requested version is unique"
+        env:
+          VERSION: ${{ steps.package-version.outputs.current-version}}
+        run: ./scripts/verify-version-is-unique
+
+      - name: "Build and publish the library"
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          VERSION: ${{ steps.package-version.outputs.current-version}}
+          APPLY_GIT_TAG: 1
+        run: ./scripts/ci ./scripts/publish

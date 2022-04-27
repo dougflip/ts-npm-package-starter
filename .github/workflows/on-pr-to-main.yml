@@ -1,0 +1,26 @@
+name: "Actions to run when a pull request is opened against main in preparation for a release"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pre_release_checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@master
+
+      - name: "Verify the requested version is unique"
+        env:
+          VERSION: ${{ steps.package-version.outputs.current-version}}
+        run: ./scripts/verify-version-is-unique
+
+      - name: "Run code quality checks"
+        env:
+          RT_NPM_AUTH_TOKEN: ${{ secrets.RT_NPM_AUTH_TOKEN }}
+        run: ./scripts/ci ./scripts/build-and-verify-code

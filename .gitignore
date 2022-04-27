@@ -1,0 +1,6 @@
+.cache
+.env
+coverage
+dist
+lib
+node_modules

@@ -1,0 +1,21 @@
+name: "Publishes a named version of the library."
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: "The name of the version to publish - ex. 0.0.0-dev.1"
+        required: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: "Build and publish the library without tagging it in git"
+        env:
+          VERSION: ${{ github.event.inputs.versionName }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          APPLY_GIT_TAG: 0
+        run: ./scripts/ci ./scripts/publish

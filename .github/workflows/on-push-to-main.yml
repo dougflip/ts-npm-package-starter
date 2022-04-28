@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Get version from package.json
+      - name: get-npm-version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@master
 
@@ -23,21 +23,16 @@ jobs:
         with:
           files: src/*
 
-      - name: Verify the requested version is unique
+      - name: "Verify the requested version is unique"
         if: steps.src-code-changes.outputs.any_changed == 'true'
         env:
           VERSION: ${{ steps.package-version.outputs.current-version}}
         run: ./scripts/verify-version-is-unique
 
-      - name: Build and publish the library
+      - name: "Build and publish the library"
         if: steps.src-code-changes.outputs.any_changed == 'true'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ steps.package-version.outputs.current-version}}
+          APPLY_GIT_TAG: 1
         run: ./scripts/ci ./scripts/publish
-
-      - name: Tag code and push to GitHub
-        uses: actions-ecosystem/action-push-tag@v1
-        with:
-          tag: ${{ steps.package-version.outputs.current-version}}
-          message: 'Tagging as version ${{ steps.package-version.outputs.current-version}}'

@@ -1,4 +1,4 @@
-type HelloWorldArgs = {
+export type HelloWorldArgs = {
   name: string;
 };
 

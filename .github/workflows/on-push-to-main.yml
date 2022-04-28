@@ -1,4 +1,4 @@
-name: "Actions to run when code is pushed to main"
+name: "Main Push Actions"
 
 on:
   push:
@@ -17,12 +17,20 @@ jobs:
         id: package-version
         uses: martinbeentjes/npm-get-version-action@master
 
+      - name: Check for changes in the src dir
+        id: src-code-changes
+        uses: tj-actions/changed-files@v18.7
+        with:
+          files: src/*
+
       - name: "Verify the requested version is unique"
+        if: steps.src-code-changes.outputs.any_changed == 'true'
         env:
           VERSION: ${{ steps.package-version.outputs.current-version}}
         run: ./scripts/verify-version-is-unique
 
       - name: "Build and publish the library"
+        if: steps.src-code-changes.outputs.any_changed == 'true'
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           VERSION: ${{ steps.package-version.outputs.current-version}}

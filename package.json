@@ -1,8 +1,8 @@
 {
   "name": "@dougflip/ts-npm-package-starter",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "main": "./lib/index.js",
-  "types": "./lib/index.d.ts",
+  "typings": "./lib/index.d.ts",
   "module": "./lib/index.mjs",
   "exports": {
     ".": {
@@ -16,7 +16,7 @@
   ],
   "license": "MIT",
   "scripts": {
-    "build": "npm run compile && rollup --config rollup.config.js",
+    "build": "npm run compile && rollup -c",
     "compile": "tsc --noEmit",
     "compile:watch": "npm run compile -- --watch",
     "format": "prettier --write src",

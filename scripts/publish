@@ -9,9 +9,6 @@ set -e
 echo "Verifying and building code"
 NODE_ENV=production ./scripts/build-and-verify-code
 
-echo "Updating package to version $VERSION"
-npm --no-git-tag-version version "$VERSION"
-
 echo "Publishing to npm registry as a public package"
 npm publish --access public
 

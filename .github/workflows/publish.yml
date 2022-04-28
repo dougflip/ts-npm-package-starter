@@ -13,6 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: "Verify the requested version is unique"
+        env:
+          VERSION: ${{ github.event.inputs.versionName }}
+        run: ./scripts/verify-version-is-unique
+
+      - name: "Update package.json and lock file to the new version"
+        env:
+          VERSION: ${{ github.event.inputs.versionName }}
+        run: npm --no-git-tag-version version $VERSION
+
       - name: "Build and publish the library without tagging it in git"
         env:
           VERSION: ${{ github.event.inputs.versionName }}

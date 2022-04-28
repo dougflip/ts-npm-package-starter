@@ -16,6 +16,7 @@ docker run --rm \
     -v /app/node_modules \
     -v "$(pwd)":/app \
     --env VERSION \
+    --env APPLY_GIT_TAG \
     --env NPM_TOKEN \
     ts-npm-package-starter \
     $CMD
